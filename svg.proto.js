@@ -3,13 +3,15 @@ var XMLDOMParser = require('xmldom').DOMParser;
 var tags;
 var attr;
 var path;
+var notTheSame = false;
 
 /**
  * Main function
  * 
  * @param string svgData
+ * 
  * @return array 
-	{ 'tags', 'attr', 'path', };
+	{ 'tags', 'attr', 'notTheSame', 'path', };
  */
 function parseSvg( svgData){};
 
