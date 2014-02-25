@@ -8,7 +8,6 @@ var path;
  * Main function
  * 
  * @param string svgData
- * @param tag
  * @return array 
 	{ 'tags', 'attr', 'path', };
  */
