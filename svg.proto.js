@@ -15,6 +15,8 @@ var notTheSame = false;
  */
 function parseSvg( svgData){};
 
+
+
 /**
  * Callback to trace tags and attributes that were missed 
  * 
@@ -26,6 +28,8 @@ function parseSvg( svgData){};
  */
 function errorCallBack( err, tag, attr ){}
 
+
+
 /**
  * Loop for XMLNodeList collection
  * 
@@ -35,6 +39,8 @@ function errorCallBack( err, tag, attr ){}
  * @return string result path
  */
 function parseNodeList( nodeList, callback){}
+
+
 
 /**
  * Parse the `g` tag
@@ -46,6 +52,8 @@ function parseNodeList( nodeList, callback){}
  */
 function parseGroup( nodeList, callback){}
 
+
+
 /**
  * Parse `path` tag
  * 
@@ -56,14 +64,19 @@ function parseGroup( nodeList, callback){}
  */
 function parsePath( node, callback){}
 
+
+
 /**
  * Parse XMLNode attributes
  * 
- * @param XMLNode Node
- * @param callback Callback function ( error, tagName, attrName)
+ * @param string operation { translate, scale, rotate, skewX, skewY }
+ * @param array params of operation
+ * @param string path to transform
  * 
  * @return string result path
  */
-function parseAttributes( node, callback){}
+function transformPath( operation, params, path){}
+
+
 
 module.exports = parseSvg; 
