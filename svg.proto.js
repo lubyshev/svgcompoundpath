@@ -67,7 +67,7 @@ function parsePath( node, callback){}
 
 
 /**
- * Parse XMLNode attributes
+ * Execute selected transform operation on the given path
  * 
  * @param string operation { translate, scale, rotate, skewX, skewY }
  * @param array params of operation
