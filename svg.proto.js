@@ -3,7 +3,7 @@ var XMLDOMParser = require('xmldom').DOMParser;
 var tags;
 var attr;
 var path;
-var notTheSame = false;
+var fileIOError = false;
 
 /**
  * Main function
@@ -11,7 +11,9 @@ var notTheSame = false;
  * @param string svgData
  * 
  * @return array 
-	{ 'tags', 'attr', 'notTheSame', 'path', };
+ * 	{ array tags, array attr, booloean fileIOError, string path, };
+ * 
+ * 
  */
 function parseSvg( svgData){};
 
