@@ -69,7 +69,7 @@ function parsePath( node, callback){}
 /**
  * Execute selected transform operation on the given path
  * 
- * @param string operation { translate, scale, rotate, skewX, skewY }
+ * @param string operation [ 'translate' | 'scale' | 'rotate' | 'skewX' | 'skewY' ]
  * @param array params of operation
  * @param string path to transform
  * 
