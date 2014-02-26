@@ -4,6 +4,7 @@ var tags;
 var attr;
 var path;
 var fileIOError = false;
+var pathChanged = false;
 
 /**
  * Main function
@@ -11,8 +12,25 @@ var fileIOError = false;
  * @param string svgData
  * 
  * @return array 
- * 	{ array tags, array attr, booloean fileIOError, string path, };
+ * 	{ array tags, array attr, boolean pathChanged, boolean fileIOError, string path, };
  * 
+ * 1. { null, null, false, true, null} - Invalid file format.
+ * 2. { null, null, false, false, null} - File contains no image data.
+ * 3. { array,  null, true, false, string } |
+ *    { null,  array, true, false, string }  |
+ *    { array, array, true, false, string } -
+ *        If a result is not the same as need - convert the picture to the compound path with an editor.
+ *        Left out tags: [tags list].
+ *        Left out attributes: [attr list].
+ * 4. { null, null, true, false, null} -
+ *        Image import failed. Try to convert the picture to the compound path with an editor.
+ *        Left out tags: [tags list].
+ *        Left out attributes: [attr list].
+ * 
+ * 5. { null, null, true, false, string} -
+ *        If a result is not the same as need - convert the picture to the compound path with an editor.
+ * 
+ * 6. { null, null, false, false, string} - That`s all right
  * 
  */
 function parseSvg( svgData){};
