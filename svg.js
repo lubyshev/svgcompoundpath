@@ -71,7 +71,8 @@ function parseSvg( svgData){
 		var width = viewBox[2] || attr.width;
 		var height = viewBox[3] || attr.height;
 */
-		path = parseNodeList( svgTag.childNodes, errorCallBack);
+		if ( path = parseNodeList( svgTag.childNodes, errorCallBack) )
+			parsingStatus = true;
 		//console.log(path);
     }
     return new Object({
@@ -172,7 +173,7 @@ function parseNodeList( nodeList, callback){
     }
     if( path && transform){
     	path = transformPath( transform, {}, path);
-    	console.log(transform);
+    	//console.log(transform);
     }
     return path; 
 }
