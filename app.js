@@ -1,12 +1,25 @@
+var fs = require('fs');
 var parseSvg = require('./svg');
 
-import_svg_image('asdasd');
+var fileSource = process.argv[2] ? process.argv[2] : __dirname + '/default.svg'; 
+var fileDestination = process.argv[3] ? process.argv[3] : null; 
 
+
+
+
+var source = fs.readFileSync( fileSource, { 'encoding' : 'utf8'});
+
+var	pathObj  = import_svg_image(source);
+console.log( pathObj);
+	
 	function import_svg_image(data, file) {
-		var parsed = parseSvg( data); 
-
+		var parsed = parseSvg( data);
 		
-/*		var xmlDoc = (new XMLDOMParser()).parseFromString(data, 'application/xml');
+		return parsed;
+		
+		
+/*
+  	var xmlDoc = (new XMLDOMParser()).parseFromString(data, 'application/xml');
 
 	  var customIcons = N.app.fontsList.getFont('custom_icons');
 
