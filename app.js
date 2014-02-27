@@ -24,9 +24,10 @@ function import_svg_image(data, file) {
 				fs.writeFileSync( file, templ, { 'encoding' : 'utf8'});
 			else
 				console.log( templ);
-		} else 
-			console.log("The result path is empty.");
+			return parsed;
+		}  
 	}
+	console.log("There are some errors.");
 }
 
 
