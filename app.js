@@ -10,7 +10,7 @@ if( ! fileSource){
 } else {
 
 	var source = fs.readFileSync( fileSource, { 'encoding' : 'utf8'});
-	var	pathObj  = import_svg_image(source, fileDestination);
+	var pathObj  = import_svg_image(source, fileDestination);
 
 }
 	
