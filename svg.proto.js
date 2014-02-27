@@ -13,7 +13,7 @@
  *      height,
  *      missedTags[],
  *      missedAttrs[],
- *      ok
+ *      ok (boolean) - true if svg converted without distortion
  *  }
  * 
  */
