@@ -6,30 +6,14 @@
  *
  *  OUT: object
  *  {
- *      path:
- *          The result path
- *
- *      x:
- *          X-coordinate of the result path
- *
- *      y:
- *          Y-coordinate of the result path
- *
- *      width:
- *          Width of the result path
- *
- *      height:
- *          Height of the result path
- *
- *      missedTags[]:
- *          List of tags that were missed while parsing
- * 
- *      missedAttrs[]:
- *          List of attributes that were missed while parsing
- *
- *      OK:
- *      	Indicates the presence of an error during the file open or document processing.
- *
+ *      path,
+ *      x,
+ *      y,
+ *      width,
+ *      height,
+ *      missedTags[],
+ *      missedAttrs[],
+ *      ok
  *  }
  * 
  */
