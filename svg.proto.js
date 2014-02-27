@@ -7,31 +7,31 @@
  *  OUT: object
  *  {
  *      path: string
- *          result path
+ *          The result path
  *
  *      x: integer
- *          X-coordinate of the resut path
+ *          X-coordinate of the result path
  *
  *      y: integer
- *          Y-coordinate of the resut path
+ *          Y-coordinate of the result path
  *
  *      width: integer
- *          Width of result path
+ *          Width of the result path
  *
  *      height: integer
- *          Height of result path
+ *          Height of the result path
  *
  *      tags: array
- *          list of tags that were missed while parsing
+ *          List of tags that were missed while parsing
  * 
  *      attrs: array
- *          list of attributes that were missed while parsing
+ *          List of attributes that were missed while parsing
  *
  *      fileIOError: boolean
- *      	Flag of file open / empty file error
+ *      	Indicates the presence of an error during the file open or document processing.
  *
  *      pathChanged: boolean
- *      	Flag
+ *      	Indicates that there are distortions during transformations.
  *      	
  *  }
  * 
