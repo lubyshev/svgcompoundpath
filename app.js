@@ -1,5 +1,5 @@
 var fs = require('fs');
-var parseSvg = require('./svgpathconvert');
+var parseSvg = require('./svgcompoundpath');
 
 var fileSource = process.argv[2] ? process.argv[2] : null;
 var fileDestination = process.argv[3] ? process.argv[3] : null; 
