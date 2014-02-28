@@ -1,12 +1,13 @@
 var fs = require('fs');
 var parseSvg = require('./svgcompoundpath');
+var SvgPath = require('svgpath');
 
 var fileSource = process.argv[2] ? process.argv[2] : null;
 var fileDestination = process.argv[3] ? process.argv[3] : null;
 
 if (!fileSource) {
   console.log('Syntax:');
-  console.log('$> node ./app.js source.svg [destionation.svg]');
+  console.log('$ node ./app.js source.svg [destionation.svg]');
 } else {
 
   var source = fs.readFileSync(fileSource, {
@@ -18,12 +19,20 @@ if (!fileSource) {
 
 function import_svg_image(data, file) {
   var parsed = parseSvg(data);
-  // console.log(parsed);
   if (parsed.ok) {
     if (parsed.path) {
       var templ = fs.readFileSync(__dirname + '/template.svg.tpl', {
         'encoding' : 'utf8'
       });
+
+      /*
+       * Some viewports are not include the picture
+       * 
+       * var scale = 1000 / parsed.height; parsed.path = new
+       * SvgPath(parsed.path).translate(-parsed.x, -parsed.y)
+       * .scale(scale).abs().round(1).toString(); width =
+       * Math.round(parsed.width * scale); // new width
+       */
       templ = templ.replace(/\{\$path\}/g, parsed.path);
       if (file)
         fs.writeFileSync(file, templ, {

@@ -49,15 +49,13 @@ function parseSvg(svgData) {
     var viewBox = _.map((svgTag.getAttribute('viewBox') || '').split(' '),
         function(val) {
           return parseInt(val, 10);
-        }); // getting base parameters
+        });
 
     var attr = {};
 
     _.forEach([ 'x', 'y', 'width', 'height' ], function(key) {
       attr[key] = parseInt(svgTag.getAttribute(key), 10);
     });
-
-    // console.log(attr);
 
     x = viewBox[0] || attr.x || 0;
     y = viewBox[1] || attr.y || 0;
@@ -66,8 +64,8 @@ function parseSvg(svgData) {
 
     if (path = parseNodeList(svgTag.childNodes, errorCallBack))
       parsingStatus = true;
-    // console.log(path);
   }
+
   return new Object({
     'path' : path ? path : null,
     'x' : x,
@@ -110,7 +108,8 @@ function errorCallBack(err, tag, attr) {
  *          path1
  * @param string
  *          path2
- * @param ...
+ * @param string
+ *          ...
  * 
  * @returns {String} The result
  */
@@ -170,7 +169,6 @@ function parseNodeList(nodeList, callback) {
   }
   if (path && transform) {
     path = transformPath(transform, {}, path);
-    // console.log(transform);
   }
   return path;
 }
