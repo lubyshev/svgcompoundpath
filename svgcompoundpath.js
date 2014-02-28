@@ -173,18 +173,18 @@ function parseNode(node) {
   if (node.attributes) {
     for (var i = 0; i < node.attributes.length; i++) {
       var attr = node.attributes[i];
-      if (allowedAttrs.indexOf(attr.name) > 0) {
-        switch (attr.name) {
-        case 'transform':
-          transform = attr.value;
-          break;
-        case 'd':
-          path = attr.value;
-          break;
-        default:
-          if (missedAttrs.indexOf(attr.name) < 0)
-            missedAttrs.push(attr.name);
-        }
+      if (allowedAttrs.indexOf(attr.name) < 0)
+        continue;
+      switch (attr.name) {
+      case 'transform':
+        transform = attr.value;
+        break;
+      case 'd':
+        path = attr.value;
+        break;
+      default:
+        if (missedAttrs.indexOf(attr.name) < 0)
+          missedAttrs.push(attr.name);
       }
     }
   }
