@@ -68,12 +68,6 @@ var allowedAttrs = [ 'accent-height', 'accumulate', 'additive', 'alphabetic',
     'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y',
     'y1', 'y2', 'yChannelSelector', 'z', 'zoomAndPan', ];
 
-var path;
-var x;
-var y;
-var width;
-var height;
-
 var missedTags;
 var missedAttrs;
 var parsingStatus;
@@ -86,8 +80,13 @@ function parseSvg(svgData) {
 
   missedTags = [];
   missedAttrs = [];
-  path = null;
   parsingStatus = false;
+
+  var path = null;
+  var x = 0;
+  var y = 0;
+  var width = '100%';
+  var height = '100%';
 
   var doc = (new XMLDOMParser()).parseFromString(svgData, 'application/xml');
   var svgTag = null;
@@ -108,10 +107,10 @@ function parseSvg(svgData) {
       attr[key] = parseInt(svgTag.getAttribute(key), 10);
     });
 
-    x = viewBox[0] || attr.x || 0;
-    y = viewBox[1] || attr.y || 0;
-    width = viewBox[2] || attr.width;
-    height = viewBox[3] || attr.height;
+    x = viewBox[0] || attr.x || x;
+    y = viewBox[1] || attr.y || y;
+    width = viewBox[2] || attr.width || width;
+    height = viewBox[3] || attr.height || height;
 
     if (path = parseNodeList(svgTag.childNodes))
       parsingStatus = true;

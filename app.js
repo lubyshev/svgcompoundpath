@@ -21,27 +21,31 @@ function import_svg_image(data, file) {
   var parsed = parseSvg(data);
   if (parsed.ok) {
     if (parsed.path) {
+      if (parsed.height !== '100%') {
+        var scale = 1000 / parsed.height;
+        parsed.path = new SvgPath(parsed.path).translate(-parsed.x, -parsed.y)
+            .scale(scale).abs().round(1).toString();
+        parsed.width = Math.round(parsed.width * scale); // new width
+        parsed.height = 1000;
 
-      /*
-       * Some viewports are not include the picture
-       * 
-       * var scale = 1000 / parsed.height; parsed.path = new
-       * SvgPath(parsed.path).translate(-parsed.x, -parsed.y)
-       * .scale(scale).abs().round(1).toString(); width =
-       * Math.round(parsed.width * scale); // new width
-       */
+      }
       var newDocument = [
           '<?xml version="1.0" standalone="no"?>',
           '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-          '<svg xmlns="http://www.w3.org/2000/svg">', '<path d="{$path}" />', ]
-          .join('\n');
+          '<svg x="$x" y="$y" width="$width" height="$height" xmlns="http://www.w3.org/2000/svg">',
+          '<path d="$path" />', ].join('\n');
 
-      newDocument = newDocument.replace(/\{\$path\}/g, parsed.path);
-      if (file)
+      [ 'x', 'y', 'width', 'height', 'path' ].forEach(function(val) {
+        var pat = new RegExp('\\$' + val, 'g');
+        newDocument = newDocument.replace(pat, parsed[val]);
+      });
+
+      if (file) {
         fs.writeFileSync(file, newDocument, {
           'encoding' : 'utf8'
         });
-      else
+        console.log('Output: ' + file);
+      } else
         console.log(newDocument);
       return parsed;
     }
