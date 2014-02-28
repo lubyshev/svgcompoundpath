@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="291.23935"
+   height="288.79623"
+   id="svg2">
+  <title
+     id="title2889">Apple</title>
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3712">
+      <stop
+         id="stop3714"
+         style="stop-color:#f70c00;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3716"
+         style="stop-color:#02e300;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       cx="183.48787"
+       cy="328.11371"
+       r="145.61967"
+       fx="183.48787"
+       fy="328.11371"
+       id="radialGradient3718"
+       xlink:href="#linearGradient3712"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.6566286,-0.00676937,0.00601015,1.4708301,-122.4554,-146.01971)" />
+    <radialGradient
+       cx="183.48787"
+       cy="328.11371"
+       r="145.61967"
+       fx="183.48787"
+       fy="328.11371"
+       id="radialGradient3730"
+       xlink:href="#linearGradient3712"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.6566286,-0.00676937,0.00601015,1.4708301,-122.4554,-146.01971)" />
+  </defs>
+  <g
+     transform="translate(-156.45962,-344.02102)"
+     id="layer1">
+    <g
+       id="g3726">
+      <path
+         d="m 286.85406,483.6542 c 0,0 -150.82018,22.67231 -148.84867,-126.17636 1.9715,-148.84868 134.06238,-69.98845 134.06238,-69.98845 0,0 137.01964,-80.83172 147.86292,79.84597 7.59549,112.55134 -134.06238,119.27609 -133.07663,116.31884 z"
+         transform="translate(22.973387,143.42687)"
+         id="path3710"
+         style="fill:url(#radialGradient3730);fill-opacity:1;stroke:#000000;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         d="m 307.27065,427.55795 c 9.35134,-64.51227 26.77012,-63.2074 26.77012,-63.2074 l -29.60756,-15.82953 c 0,0 4.95847,49.81441 -13.82423,76.56151 -3.30324,4.70389 18.45239,6.12403 16.66167,2.47542 z"
+         id="path3724"
+         style="fill:#825215;fill-opacity:1;stroke:#000000;stroke-width:9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+  </g>
+</svg>

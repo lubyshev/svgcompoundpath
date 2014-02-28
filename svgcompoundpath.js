@@ -57,7 +57,7 @@ function parseSvg(svgData) {
       attr[key] = parseInt(svgTag.getAttribute(key), 10);
     });
 
-    console.log(attr);
+    // console.log(attr);
 
     x = viewBox[0] || attr.x || 0;
     y = viewBox[1] || attr.y || 0;

@@ -18,7 +18,7 @@ if (!fileSource) {
 
 function import_svg_image(data, file) {
   var parsed = parseSvg(data);
-  console.log(parsed);
+  // console.log(parsed);
   if (parsed.ok) {
     if (parsed.path) {
       var templ = fs.readFileSync(__dirname + '/template.svg.tpl', {
