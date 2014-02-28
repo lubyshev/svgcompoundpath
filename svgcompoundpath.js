@@ -11,6 +11,63 @@
 var XMLDOMParser = require('xmldom').DOMParser;
 var _ = require('lodash');
 
+var allowedTags = [ 'a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
+    'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
+    'color-profile', 'cursor', 'defs', 'desc', 'ellipse', 'feBlend',
+    'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix',
+    'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feFlood',
+    'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage',
+    'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight',
+    'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence', 'filter',
+    'font', 'font-face', 'font-face-format', 'font-face-name', 'font-face-src',
+    'font-face-uri', 'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern',
+    'image', 'line', 'linearGradient', 'marker', 'mask', 'metadata',
+    'missing-glyph', 'mpath', 'path', 'pattern', 'polygon', 'polyline',
+    'radialGradient', 'rect', 'script', 'set', 'stop', 'style', 'svg',
+    'switch', 'symbol', 'text', 'textPath', 'title', 'tref', 'tspan', 'use',
+    'view', 'vkern', ];
+
+var allowedAttrs = [ 'accent-height', 'accumulate', 'additive', 'alphabetic',
+    'amplitude', 'arabic-form', 'ascent', 'attributeName', 'attributeType',
+    'azimuth', 'baseFrequency', 'baseProfile', 'bbox', 'begin', 'bias', 'by',
+    'calcMode', 'cap-height', 'class', 'clipPathUnits', 'contentScriptType',
+    'contentStyleType', 'cx', 'cy', 'd', 'descent', 'diffuseConstant',
+    'divisor', 'dur', 'dx', 'dy', 'edgeMode', 'elevation', 'end', 'exponent',
+    'externalResourcesRequired', 'fill', 'filterRes', 'filterUnits',
+    'font-family', 'font-size', 'font-stretch', 'font-style', 'font-variant',
+    'font-weight', 'format', 'from', 'fx', 'fy', 'g1', 'g2', 'glyph-name',
+    'glyphRef', 'gradientTransform', 'gradientUnits', 'hanging', 'height',
+    'horiz-adv-x', 'horiz-origin-y', 'id', 'ideographic', 'in', 'in2',
+    'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kernelMatrix',
+    'kernelUnitLength', 'keyPoints', 'keySplines', 'keyTimes', 'lang',
+    'lengthAdjust', 'limitingConeAngle', 'local', 'markerHeight',
+    'markerUnits', 'markerWidth', 'maskContentUnits', 'maskUnits',
+    'mathematical', 'max', 'media', 'method', 'min', 'mode', 'name', 'name',
+    'numOctaves', 'offset', 'onabort', 'onactivate', 'onbegin', 'onclick',
+    'onend', 'onerror', 'onfocusin', 'onfocusout', 'onload', 'onmousedown',
+    'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onrepeat',
+    'onresize', 'onscroll', 'onunload', 'onzoom', 'operator', 'order',
+    'orient', 'orientation', 'origin', 'overline-position',
+    'overline-thickness', 'panose-1', 'path', 'pathLength',
+    'patternContentUnits', 'patternTransform', 'patternUnits', 'points',
+    'pointsAtX', 'pointsAtY', 'pointsAtZ', 'preserveAlpha',
+    'preserveAspectRatio', 'primitiveUnits', 'r', 'radius', 'refX', 'refY',
+    'rendering-intent', 'repeatCount', 'repeatDur', 'requiredExtensions',
+    'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry', 'scale',
+    'seed', 'slope', 'spacing', 'specularConstant', 'specularExponent',
+    'spreadMethod', 'startOffset', 'stdDeviation', 'stemh', 'stemv',
+    'stitchTiles', 'strikethrough-position', 'strikethrough-thickness',
+    'string', 'style', 'surfaceScale', 'systemLanguage', 'tableValues',
+    'target', 'targetX', 'targetY', 'textLength', 'title', 'to', 'transform',
+    'type', 'u1', 'u2', 'underline-position', 'underline-thickness', 'unicode',
+    'unicode-range', 'units-per-em', 'v-alphabetic', 'v-hanging',
+    'v-ideographic', 'v-mathematical', 'values', 'values', 'version',
+    'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'viewBox', 'viewTarget',
+    'width', 'widths', 'x', 'x-height', 'x1', 'x2', 'xChannelSelector',
+    'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show',
+    'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y',
+    'y1', 'y2', 'yChannelSelector', 'z', 'zoomAndPan', ];
+
 var path;
 var x;
 var y;
@@ -62,7 +119,7 @@ function parseSvg(svgData) {
     width = viewBox[2] || attr.width;
     height = viewBox[3] || attr.height;
 
-    if (path = parseNodeList(svgTag.childNodes, errorCallBack))
+    if (path = parseNodeList(svgTag.childNodes))
       parsingStatus = true;
   }
 
@@ -80,42 +137,12 @@ function parseSvg(svgData) {
 };
 
 /**
- * Callback to trace tags and attributes that were missed
+ * Combine several paths into the compound path
  * 
- * @param integer
- *          err Error code or 0 if all is right
- * @param string
- *          tag parsed tag
- * @param string
- *          attr parsed attribute
- * 
- * @return void
- */
-function errorCallBack(err, tag, attr) {
-  if (err) {
-    if (tag && missedTags.indexOf(tag) < 0)
-      missedTags.push(tag);
-    if (attr && missedAttrs.indexOf(attr) < 0)
-      missedAttrs.push(attr);
-  }
-
-}
-
-/**
- * Combine several paths into the compaund path
- * 
- * @param string
- *          path1
- * @param string
- *          path2
- * @param string
- *          ...
- * 
- * @returns {String} The result
  */
 function pathMerge(paths) {
   var result = null;
-  Array.prototype.slice.call(arguments).forEach(function(val, index, array) {
+  paths.forEach(function(val, index, array) {
     if (val && typeof val == 'string') {
       if (!result)
         result = val;
@@ -127,79 +154,76 @@ function pathMerge(paths) {
 }
 
 /**
- * Loop for XMLNodeList collection
+ * Parse SVG document node list and return result path
  * 
- * @param array
- *          Array of XMLNode`s
- * @param callback
- *          Callback function ( error, tagName, attrName)
+ */
+function parseNodeList(nodeList) {
+  var path = [];
+  for (var i = 0; nodeList && (i < nodeList.length); i++) {
+    if (typeof nodeList[i].tagName != 'string'
+        || allowedTags.indexOf(nodeList[i].tagName) < 0)
+      continue;
+    path[i] = parseNode(nodeList[i]);
+  }
+  return pathMerge(path);
+}
+
+/**
+ * Parse SVG node and return result path
  * 
  * @return string result path
  */
-function parseNodeList(nodeList, callback) {
+function parseNode(node) {
   var transform = null;
-  if (nodeList.tagName == 'g') {
-    if (nodeList.attributes) {
-      for (var i = 0; i < nodeList.attributes.length; i++) {
-        switch (nodeList.attributes[i].name) {
+  var path = null;
+
+  // Attributes parsing
+  if (node.attributes) {
+    for (var i = 0; i < node.attributes.length; i++) {
+      var attr = node.attributes[i];
+      if (allowedAttrs.indexOf(attr.name) > 0) {
+        switch (attr.name) {
         case 'transform':
-          transform = nodeList.attributes[i].value;
+          transform = attr.value;
+          break;
+        case 'd':
+          path = attr.value;
           break;
         default:
-          callback(1, null, nodeList.attributes[i].name);
+          if (missedAttrs.indexOf(attr.name) < 0)
+            missedAttrs.push(attr.name);
         }
       }
     }
-    nodeList = nodeList.childNodes;
   }
-  var path = null;
-  for (var i = 0; nodeList && (i < nodeList.length); i++) {
-    var node = nodeList[i];
-    switch (node.tagName) {
-    case 'g':
-      path = pathMerge(path, parseNodeList(node, callback));
-      break;
-    case 'path':
-      path = pathMerge(path, parsePath(node, callback));
-      break;
-    default:
-      callback(1, node.tagName, null);
-      break;
-    }
+
+  // Tags parsing
+  switch (node.tagName) {
+  case 'g':
+    if (node.childNodes.length > 0)
+      path = parseNodeList(node.childNodes);
+    else
+      path = null;
+    break;
+  case 'path':
+    break;
+  default:
+    if (missedTags.indexOf(node.tagName) < 0)
+      missedTags.push(node.tagName);
   }
   if (path && transform) {
-    path = transformPath(transform, {}, path);
+    path = transformPath(path, transform);
   }
+
   return path;
+
 }
 
 /**
- * Parse `path` tag
+ * Execute transform operation on the given path and return result
  * 
- * @param XMLNode
- *          Node
- * @param callback
- *          Callback function ( error, tagName, attrName)
- * 
- * @return string result path
  */
-function parsePath(node, callback) {
-  return node.getAttribute('d');
-}
-
-/**
- * Execute selected transform operation on the given path
- * 
- * @param string
- *          operation [ 'translate' | 'scale' | 'rotate' | 'skewX' | 'skewY' ]
- * @param array
- *          params of operation
- * @param string
- *          path to transform
- * 
- * @return string result path
- */
-function transformPath(operation, params, path) {
+function transformPath(path, transform) {
   return path;
 }
 

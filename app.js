@@ -21,9 +21,6 @@ function import_svg_image(data, file) {
   var parsed = parseSvg(data);
   if (parsed.ok) {
     if (parsed.path) {
-      var templ = fs.readFileSync(__dirname + '/template.svg.tpl', {
-        'encoding' : 'utf8'
-      });
 
       /*
        * Some viewports are not include the picture
@@ -33,13 +30,19 @@ function import_svg_image(data, file) {
        * .scale(scale).abs().round(1).toString(); width =
        * Math.round(parsed.width * scale); // new width
        */
-      templ = templ.replace(/\{\$path\}/g, parsed.path);
+      var newDocument = [
+          '<?xml version="1.0" standalone="no"?>',
+          '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+          '<svg xmlns="http://www.w3.org/2000/svg">', '<path d="{$path}" />', ]
+          .join('\n');
+
+      newDocument = newDocument.replace(/\{\$path\}/g, parsed.path);
       if (file)
-        fs.writeFileSync(file, templ, {
+        fs.writeFileSync(file, newDocument, {
           'encoding' : 'utf8'
         });
       else
-        console.log(templ);
+        console.log(newDocument);
       return parsed;
     }
   }
