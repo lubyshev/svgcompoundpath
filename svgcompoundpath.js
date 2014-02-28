@@ -81,12 +81,6 @@ var parsingStatus;
 /**
  * Main function
  * 
- * @param string
- *          svgData
- * 
- * @return object { array missedTags, array missedAttrs, boolean pathChanged,
- *         boolean fileIOError, string path, };
- * 
  */
 function parseSvg(svgData) {
 
@@ -171,7 +165,6 @@ function parseNodeList(nodeList) {
 /**
  * Parse SVG node and return result path
  * 
- * @return string result path
  */
 function parseNode(node) {
   var transform = null;
@@ -211,6 +204,7 @@ function parseNode(node) {
     if (missedTags.indexOf(node.tagName) < 0)
       missedTags.push(node.tagName);
   }
+
   if (path && transform) {
     path = transformPath(path, transform);
   }
@@ -220,7 +214,7 @@ function parseNode(node) {
 }
 
 /**
- * Execute transform operation on the given path and return result
+ * Execute transform operation on the given path and return result path
  * 
  */
 function transformPath(path, transform) {
