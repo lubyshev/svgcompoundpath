@@ -1,20 +1,14 @@
 {
   "name" : "svgpathconvert",
-
   "version" : "1.0.0",
-
   "description" : "Convert SVG document to the compound path",
   "keywords" : [],
   "homepage" : "https://github.com/lubyshev/fontello_svg",
-  "repository" : {
-                        "type": "git",
-                        "url": "git://github.com/lubyshev/fontello_svg.git"
-                      },
-
+  "repository" : {"type": "git", "url": "git://github.com/lubyshev/fontello_svg.git" },
   "main" : "./app.js",
   "dependencies" : {
-        "lodash": "*",
-        "xmldom": "*",
-        "svgpath": "*"
+    "lodash": "*",
+    "xmldom": "*",
+    "svgpath": "*"
   }
 }

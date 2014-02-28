@@ -1,20 +1,10 @@
 /**
- *  Function to convert svg document to the compound path
- *  
- *  IN: string
- *      SVG document 
- *
- *  OUT: object
- *  {
- *      path,
- *      x,
- *      y,
- *      width,
- *      height,
- *      missedTags[],
- *      missedAttrs[],
- *      ok (boolean) - true if svg converted without distortion
- *  }
+ * Function to convert svg document to the compound path
+ * 
+ * IN: string SVG document
+ * 
+ * OUT: object { path, x, y, width, height, missedTags[], missedAttrs[], ok
+ * (boolean) - true if svg converted without distortion }
  * 
  */
 
@@ -34,177 +24,185 @@ var parsingStatus;
 /**
  * Main function
  * 
- * @param string svgData
+ * @param string
+ *          svgData
  * 
- * @return object
- * 	{ array missedTags, array missedAttrs, boolean pathChanged, boolean fileIOError, string path, };
+ * @return object { array missedTags, array missedAttrs, boolean pathChanged,
+ *         boolean fileIOError, string path, };
  * 
  */
-function parseSvg( svgData){
-	
-	missedTags = [];
-	missedAttrs = [];
-    path = null;
-    parsingStatus = false;
-    
-    var doc = (new XMLDOMParser()).parseFromString( svgData, 'application/xml');
-    
-    if (typeof doc != 'undefined') {
-		var svgTag = doc.getElementsByTagName('svg')[0];
-		
+function parseSvg(svgData) {
 
-/*		var viewBox = _.map((svgTag.getAttribute('viewBox') || '').split(' '),
-				function(val) {
-					return parseInt(val, 10);
-				});
+  missedTags = [];
+  missedAttrs = [];
+  path = null;
+  parsingStatus = false;
 
-		// getting base parameters
+  var doc = (new XMLDOMParser()).parseFromString(svgData, 'application/xml');
+  var svgTag = null;
 
-		var attr = {};
+  if (typeof doc != 'undefined')
+    svgTag = doc.getElementsByTagName('svg')[0];
 
-		_.forEach([ 'x', 'y', 'width', 'height' ], function(key) {
-			attr[key] = parseInt(svgTag.getAttribute(key), 10);
-		});
+  if (typeof svgTag != 'undefined') {
 
-		var x = viewBox[0] || attr.x || 0;
-		var y = viewBox[1] || attr.y || 0;
-		var width = viewBox[2] || attr.width;
-		var height = viewBox[3] || attr.height;
-*/
-		if ( path = parseNodeList( svgTag.childNodes, errorCallBack) )
-			parsingStatus = true;
-		//console.log(path);
-    }
-    return new Object({
-        'path' : path ? path : null, 
-    	'x' : x,
-    	'y' : y,
-    	'width' : width,
-    	'height' : height,    
-        'tags': missedTags.length > 0 ? missedTags : null, 
-        'attr': missedAttrs.length > 0 ? missedAttrs : null,
-        'ok': parsingStatus,
-    });	
-	
+    var viewBox = _.map((svgTag.getAttribute('viewBox') || '').split(' '),
+        function(val) {
+          return parseInt(val, 10);
+        }); // getting base parameters
+
+    var attr = {};
+
+    _.forEach([ 'x', 'y', 'width', 'height' ], function(key) {
+      attr[key] = parseInt(svgTag.getAttribute(key), 10);
+    });
+
+    console.log(attr);
+
+    x = viewBox[0] || attr.x || 0;
+    y = viewBox[1] || attr.y || 0;
+    width = viewBox[2] || attr.width;
+    height = viewBox[3] || attr.height;
+
+    if (path = parseNodeList(svgTag.childNodes, errorCallBack))
+      parsingStatus = true;
+    // console.log(path);
+  }
+  return new Object({
+    'path' : path ? path : null,
+    'x' : x,
+    'y' : y,
+    'width' : width,
+    'height' : height,
+    'tags' : missedTags.length > 0 ? missedTags : null,
+    'attr' : missedAttrs.length > 0 ? missedAttrs : null,
+    'ok' : parsingStatus,
+  });
+
 };
 
-
-
 /**
- * Callback to trace tags and attributes that were missed 
+ * Callback to trace tags and attributes that were missed
  * 
- * @param integer err Error code or 0 if all is right
- * @param string tag parsed tag
- * @param string attr parsed attribute
+ * @param integer
+ *          err Error code or 0 if all is right
+ * @param string
+ *          tag parsed tag
+ * @param string
+ *          attr parsed attribute
  * 
- * @return void 
+ * @return void
  */
-function errorCallBack( err, tag, attr ){
-	if(err){
-		if( tag &&
-			missedTags.indexOf( tag) < 0)
-			missedTags.push( tag);
-		if( attr &&
-			missedAttrs.indexOf( attr) < 0)
-			missedAttrs.push( attr);
-	}
-	
-}
+function errorCallBack(err, tag, attr) {
+  if (err) {
+    if (tag && missedTags.indexOf(tag) < 0)
+      missedTags.push(tag);
+    if (attr && missedAttrs.indexOf(attr) < 0)
+      missedAttrs.push(attr);
+  }
 
+}
 
 /**
  * Combine several paths into the compaund path
  * 
- * @param string path1
- * @param string path2
+ * @param string
+ *          path1
+ * @param string
+ *          path2
  * @param ...
  * 
  * @returns {String} The result
  */
-function pathMerge( paths){
-	var result = null;
-	Array.prototype.slice.call(arguments).forEach(function (val, index, array) {
-	  if( val && typeof val == 'string'){
-		  if( ! result ) result = val;
-		  else result = result + ' ' + val;
-	  }
-	});
-	return result;
+function pathMerge(paths) {
+  var result = null;
+  Array.prototype.slice.call(arguments).forEach(function(val, index, array) {
+    if (val && typeof val == 'string') {
+      if (!result)
+        result = val;
+      else
+        result = result + ' ' + val;
+    }
+  });
+  return result;
 }
 
 /**
  * Loop for XMLNodeList collection
  * 
- * @param array Array of XMLNode`s
- * @param callback Callback function ( error, tagName, attrName)
+ * @param array
+ *          Array of XMLNode`s
+ * @param callback
+ *          Callback function ( error, tagName, attrName)
  * 
  * @return string result path
  */
-function parseNodeList( nodeList, callback){
-	var transform = null;
-	if( nodeList.tagName == 'g'){
-		if( nodeList.attributes ){
-		    for ( var i=0; i< nodeList.attributes.length; i++ ){
-		    	switch( nodeList.attributes[i].name ){
-		        case 'transform':
-		        	transform = nodeList.attributes[i].value;
-		            break;
-		        default:
-		    		callback(1, null, nodeList.attributes[i].name);
-		    	}
-		    }
-		} 
-		nodeList = nodeList.childNodes;
-	} 
-	var path = null;
-    for ( var i=0; nodeList && ( i< nodeList.length); i++ ){
-    	var node = nodeList[i];
-        switch( node.tagName) {
-        case 'g':
-        	path = pathMerge( path,  parseNodeList( node, callback) );
-            break;
-        case 'path':
-        	path = pathMerge( path,  parsePath( node, callback) );
-            break;
+function parseNodeList(nodeList, callback) {
+  var transform = null;
+  if (nodeList.tagName == 'g') {
+    if (nodeList.attributes) {
+      for (var i = 0; i < nodeList.attributes.length; i++) {
+        switch (nodeList.attributes[i].name) {
+        case 'transform':
+          transform = nodeList.attributes[i].value;
+          break;
         default:
-        	callback(1, node.tagName, null);
-            break;
-        } 
+          callback(1, null, nodeList.attributes[i].name);
+        }
+      }
     }
-    if( path && transform){
-    	path = transformPath( transform, {}, path);
-    	//console.log(transform);
+    nodeList = nodeList.childNodes;
+  }
+  var path = null;
+  for (var i = 0; nodeList && (i < nodeList.length); i++) {
+    var node = nodeList[i];
+    switch (node.tagName) {
+    case 'g':
+      path = pathMerge(path, parseNodeList(node, callback));
+      break;
+    case 'path':
+      path = pathMerge(path, parsePath(node, callback));
+      break;
+    default:
+      callback(1, node.tagName, null);
+      break;
     }
-    return path; 
+  }
+  if (path && transform) {
+    path = transformPath(transform, {}, path);
+    // console.log(transform);
+  }
+  return path;
 }
 
 /**
  * Parse `path` tag
  * 
- * @param XMLNode Node
- * @param callback Callback function ( error, tagName, attrName)
+ * @param XMLNode
+ *          Node
+ * @param callback
+ *          Callback function ( error, tagName, attrName)
  * 
  * @return string result path
  */
-function parsePath( node, callback){
-	return node.getAttribute('d');
+function parsePath(node, callback) {
+  return node.getAttribute('d');
 }
-
-
 
 /**
  * Execute selected transform operation on the given path
  * 
- * @param string operation [ 'translate' | 'scale' | 'rotate' | 'skewX' | 'skewY' ]
- * @param array params of operation
- * @param string path to transform
+ * @param string
+ *          operation [ 'translate' | 'scale' | 'rotate' | 'skewX' | 'skewY' ]
+ * @param array
+ *          params of operation
+ * @param string
+ *          path to transform
  * 
  * @return string result path
  */
-function transformPath( operation, params, path){
-	return path;
+function transformPath(operation, params, path) {
+  return path;
 }
 
-
-
-module.exports = parseSvg; 
+module.exports = parseSvg;
