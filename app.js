@@ -18,7 +18,7 @@ function import_svg_image(data, file) {
 	var parsed = parseSvg( data);
 	if( parsed.ok ){
 		if( parsed.path){
-			var templ = fs.readFileSync( __dirname + '/files/template.svg', { 'encoding' : 'utf8'});
+			var templ = fs.readFileSync( __dirname + '/template.svg.tpl', { 'encoding' : 'utf8'});
 			templ = templ.replace(/\{\$path\}/g, parsed.path);
 			if( file)
 				fs.writeFileSync( file, templ, { 'encoding' : 'utf8'});
