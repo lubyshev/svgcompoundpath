@@ -9,6 +9,6 @@
   "dependencies" : {
     "lodash": "*",
     "xmldom": "*",
-    "svgpath": "*"
+    "svgpath": "git://github.com/lubyshev/svgpath#newone"
   }
 }

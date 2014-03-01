@@ -10,6 +10,7 @@
 
 var XMLDOMParser = require('xmldom').DOMParser;
 var _ = require('lodash');
+var SvgPath = require('svgpath');
 
 var allowedTags = [ 'a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
     'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
@@ -217,7 +218,7 @@ function parseNode(node) {
  * 
  */
 function transformPath(path, transform) {
-  return path;
+  return (new SvgPath(path)).transform(transform).toString();
 }
 
 module.exports = parseSvg;
