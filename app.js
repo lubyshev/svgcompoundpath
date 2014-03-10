@@ -9,6 +9,7 @@ var fileDestination = process.argv[3] ? process.argv[3] : null;
 
 function import_svg_image(data, file) {
   var parsed = parseSvg(data);
+  var errString;
   if (parsed.ok) {
     if (parsed.path) {
       parsed.path = new SvgPath(parsed.path);
@@ -41,12 +42,33 @@ function import_svg_image(data, file) {
       } else {
         console.log(newDocument);
       }
-      return parsed;
     }
   }
-  console.log("There are some errors.");
+  
+  
+  if( parsed.path === ''){
+    if( ! parsed.ok){
+      errString = 'Invalid file';
+    } else {
+      errString = 'Image import failed';
+    }
+  } else {
+    if( ! parsed.ignoredTags && ! parsed.ignoredAttributes && !parsed.hasManySources ){
+      errString = 'That`s all right';
+    } else {
+      var ignoredString = '';
+      if(parsed.ignoredTags){
+        ignoredString += ' Ignored tag(s): ' + parsed.ignoredTags.join(', ') + '.';
+      }
+      if(parsed.ignoredAttributes){
+        ignoredString += ' Ignored attribute(s): ' + parsed.ignoredAttributes.join(', ') + '.';
+      }
+      errString = 'If result is not the same as need try to convert with an editor.' + ignoredString;
+    }
+  }
+  
+  console.log(errString);
 }
-
 
 if (!fileSource) {
   console.log('Syntax:');
@@ -55,6 +77,5 @@ if (!fileSource) {
   var source = fs.readFileSync(fileSource, {
     'encoding' : 'utf8'
   });
-  //var pathObj =
   import_svg_image(source, fileDestination);
 }

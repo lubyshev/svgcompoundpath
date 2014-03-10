@@ -32,64 +32,58 @@ var allowedAttrs = _.mapValues(
 var parsingStatus;
 
 /**
- * Execute transform operation on the given path and return result path
- * 
- */
-function transformPath(path, transform) {
-  return (new SvgPath(path)).transform(transform).toString();
-}
-
-
-/**
  * Parse SVG node and return result path
  * 
  */
 function parseNode(node, ignored) {
-  var transform = null;
-  var path = null;
+  var transform;
+  var path;
 
-  // Attributes parsing
-  if (node.attributes) {
-    var attrLen = node.attributes.length;
-    for (var i = 0; i < attrLen; i++) {
-      var attr = node.attributes[i];
-      if (allowedAttrs[ attr.name ] !== true ){
-        continue;
-      }
-      switch (attr.name) {
-      case 'transform':
-        transform = attr.value;
-        break;
-      case 'd':
-        path = attr.value;
-        break;
-      default:
-        if (ignored.attrs.indexOf(attr.name) < 0){
-          ignored.attrs.push(attr.name);
+  // Node is not a comment
+  if(node.tagName){
+    // Attributes parsing
+    if (node.attributes) {
+      var attrLen = node.attributes.length;
+      for (var i = 0; i < attrLen; i++) {
+        var attr = node.attributes[i];
+        if (allowedAttrs[ attr.name ] !== true ){
+          continue;
+        }
+        switch (attr.name) {
+        case 'transform':
+          transform = attr.value;
+          break;
+        case 'd':
+          path = attr.value;
+          break;
+        default:
+          if (ignored.attrs.indexOf(attr.name) < 0){
+            ignored.attrs.push(attr.name);
+          }
         }
       }
     }
-  }
-
-  // Tags parsing
-  switch (node.tagName) {
-  case 'g':
-    if (node.childNodes.length > 0){
-      path = parseNodeList(node.childNodes, ignored);
-    } else {
-      path = null;
-    }
-    break;
-  case 'path':
-    break;
-  default:
-    if (ignored.tags.indexOf(node.tagName) < 0){
-      ignored.tags.push(node.tagName);
+  
+    // Tags parsing
+    switch (node.tagName) {
+    case 'g':
+      if (node.childNodes.length > 0){
+        path = parseNodeList(node.childNodes, ignored);
+      } else {
+        path = null;
+      }
+      break;
+    case 'path':
+      break;
+    default:
+      if (ignored.tags.indexOf(node.tagName) < 0){
+        ignored.tags.push(node.tagName);
+      }
     }
   }
 
   if (path && transform) {
-    path = transformPath(path, transform);
+    path = (new SvgPath(path)).transform(transform).toString();
   }
 
   return path;
@@ -108,6 +102,7 @@ function parseNodeList(nodeList, ignored) {
     }
     path[i] = parseNode(nodeList[i], ignored);
   }
+  if( path.length > 1) { ignored.hasManySources = true; }
   return path.join(' ');
 }
 
@@ -131,6 +126,7 @@ function parseSvg(svgData) {
   var ignored = {
     tags: [],
     attrs:[],
+    hasManySources: false,
   };
 
   parsingStatus = false;
@@ -142,7 +138,6 @@ function parseSvg(svgData) {
   var height = '100%';
 
   var doc = (new XMLDOMParser()).parseFromString(svgData, 'application/xml');
-  //var doc = (new XMLDOMParser()).parseFromString('asdfsdfas', 'application/xml');
   var svgTag = null;
 
   if (doc){
@@ -151,7 +146,8 @@ function parseSvg(svgData) {
 
   if (svgTag) {
 
-    var viewBox = _.map((svgTag.getAttribute('viewBox') || '').split(' '),
+    var viewBox = _.map(
+      (svgTag.getAttribute('viewBox') || '').replace(/\,/,' ').replace(/s{2,}/,' ').split(' '),
         function(val) {
           return parseInt(val, 10);
         });
@@ -174,14 +170,15 @@ function parseSvg(svgData) {
   }
 
   return {
-    'path' : path ? path : null,
-    'x' : x,
-    'y' : y,
-    'width' : width,
-    'height' : height,
-    'ignoredTags' : ignored.tags.length > 0 ? ignored.tags : null,
-    'ignoredAttributes' : ignored.attrs.length > 0 ? ignored.attrs : null,
-    'ok' : parsingStatus,
+    path : path ? path : '',
+    x : x,
+    y : y,
+    width : width,
+    height : height,
+    ignoredTags : ignored.tags.length > 0 ? ignored.tags : null,
+    ignoredAttributes : ignored.attrs.length > 0 ? ignored.attrs : null,
+    ok : parsingStatus,
+    hasManySources: ignored.hasManySources,
   };
 
 }
