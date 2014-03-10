@@ -9,27 +9,24 @@ var allowedTags = {
   title: true
 };
 
-var allowedAttrs = _.mapValues(
-  _.zipObject([
-    'alignment-baseline', 'baseline-shift', 'class', 'clip', 'clip-path', 'clip-rule',
-    'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile',
-    'color-rendering', 'cursor', 'd', 'direction', 'display', 'dominant-baseline',
-    'enable-background', 'externalResourcesRequired', 'fill', 'fill-opacity', 'fill-rule',
-    'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust',
-    'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-orientation-horizontal',
-    'glyph-orientation-vertical', 'image-rendering', 'kerning', 'letter-spacing',
-    'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'opacity',
-    'overflow', 'pathLength', 'pointer-events', 'requiredFeatures', 'requiredExtensions',
-    'shape-rendering', 'stop-color', 'stop-opacity', 'stroke', 'stroke-dasharray',
-    'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit',
-    'stroke-opacity', 'stroke-width', 'style', 'text-anchor', 'text-decoration',
-    'text-rendering', 'transform', 'unicode-bidi', 'visibility', 'word-spacing',
-    'writing-mode'
-  ]),
-  function() { return true; }
-);
-
-var parsingStatus;
+var allowedAttrs = {};
+[ 'alignment-baseline', 'baseline-shift', 'class', 'clip', 'clip-path', 'clip-rule',
+  'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile',
+  'color-rendering', 'cursor', 'd', 'direction', 'display', 'dominant-baseline',
+  'enable-background', 'externalResourcesRequired', 'fill', 'fill-opacity', 'fill-rule',
+  'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust',
+  'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-orientation-horizontal',
+  'glyph-orientation-vertical', 'image-rendering', 'kerning', 'letter-spacing',
+  'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'opacity',
+  'overflow', 'pathLength', 'pointer-events', 'requiredFeatures', 'requiredExtensions',
+  'shape-rendering', 'stop-color', 'stop-opacity', 'stroke', 'stroke-dasharray',
+  'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit',
+  'stroke-opacity', 'stroke-width', 'style', 'text-anchor', 'text-decoration',
+  'text-rendering', 'transform', 'unicode-bidi', 'visibility', 'word-spacing',
+  'writing-mode'
+].forEach(function(val){
+  allowedAttrs[val] = true;
+});
 
 /**
  * Parse SVG node and return result path
@@ -102,7 +99,9 @@ function parseNodeList(nodeList, ignored) {
     }
     path[i] = parseNode(nodeList[i], ignored);
   }
-  if( path.length > 1) { ignored.hasManySources = true; }
+  ignored.parsingStatus = path.length > 0 ?
+    path.length > 1 ? false : true
+    : false;
   return path.join(' ');
 }
 
@@ -114,7 +113,10 @@ function parseNodeList(nodeList, ignored) {
  * 
  * @return {
  *    path,
- *    x, y, width, height,
+ *    x,
+ *    y,
+ *    width,
+ *    height,
  *    ignoredTags[],
  *    ignoredAttrs[],
  *    ok,
@@ -126,16 +128,14 @@ function parseSvg(svgData) {
   var ignored = {
     tags: [],
     attrs:[],
-    hasManySources: false,
+    parsingStatus: false,
   };
-
-  parsingStatus = false;
 
   var path = null;
   var x = 0;
   var y = 0;
-  var width = '100%';
-  var height = '100%';
+  var width = 0;
+  var height = 0;
 
   var doc = (new XMLDOMParser()).parseFromString(svgData, 'application/xml');
   var svgTag = null;
@@ -162,10 +162,10 @@ function parseSvg(svgData) {
     y = viewBox[1] || attr.y || y;
     width = viewBox[2] || attr.width || width;
     height = viewBox[3] || attr.height || height;
-
-    path = parseNodeList(svgTag.childNodes, ignored);
-    if (path){
-      parsingStatus = true;
+    
+    // TODO: Calculate the bounding box and set correct width and height
+    if(width > 0 && height > 0){
+      path = parseNodeList(svgTag.childNodes, ignored);
     }
   }
 
@@ -177,8 +177,7 @@ function parseSvg(svgData) {
     height : height,
     ignoredTags : ignored.tags.length > 0 ? ignored.tags : null,
     ignoredAttributes : ignored.attrs.length > 0 ? ignored.attrs : null,
-    ok : parsingStatus,
-    hasManySources: ignored.hasManySources,
+    ok : ignored.parsingStatus,
   };
 
 }

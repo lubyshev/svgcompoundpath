@@ -53,17 +53,16 @@ function import_svg_image(data, file) {
       errString = 'Image import failed';
     }
   } else {
-    if( ! parsed.ignoredTags && ! parsed.ignoredAttributes && !parsed.hasManySources ){
-      errString = 'That`s all right';
+    if( ! parsed.ignoredTags && ! parsed.ignoredAttributes ){
+      if(parsed.ok){
+        errString = 'That`s all right';
+      } else {
+        errString = 'If result is not the same as need try to convert with an editor.';
+      }
     } else {
-      var ignoredString = '';
-      if(parsed.ignoredTags){
-        ignoredString += ' Ignored tag(s): ' + parsed.ignoredTags.join(', ') + '.';
-      }
-      if(parsed.ignoredAttributes){
-        ignoredString += ' Ignored attribute(s): ' + parsed.ignoredAttributes.join(', ') + '.';
-      }
-      errString = 'If result is not the same as need try to convert with an editor.' + ignoredString;
+      errString = 'If result is not the same as need try to convert with an editor.' +
+        (parsed.ignoredTags ? ' Ignored tag(s): ' + parsed.ignoredTags.join(', ') + '.' : '') +
+        (parsed.ignoredAttributes ? ' Ignored attribute(s): ' + parsed.ignoredAttributes.join(', ') + '.' : '');
     }
   }
   
