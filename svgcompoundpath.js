@@ -32,7 +32,7 @@ var allowedAttrs = {};
  * Parse SVG node and return result path
  * 
  */
-function parseNode(node, ignored) {
+function parseNode(node, state) {
   var transform;
   var path;
 
@@ -54,8 +54,8 @@ function parseNode(node, ignored) {
           path = attr.value;
           break;
         default:
-          if (ignored.attrs.indexOf(attr.name) < 0){
-            ignored.attrs.push(attr.name);
+          if (state.ignoredAttrs.indexOf(attr.name) < 0){
+            state.ignoredAttrs.push(attr.name);
           }
         }
       }
@@ -65,7 +65,7 @@ function parseNode(node, ignored) {
     switch (node.tagName) {
     case 'g':
       if (node.childNodes.length > 0){
-        path = parseNodeList(node.childNodes, ignored);
+        path = parseNodeList(node.childNodes, state);
       } else {
         path = null;
       }
@@ -73,8 +73,8 @@ function parseNode(node, ignored) {
     case 'path':
       break;
     default:
-      if (ignored.tags.indexOf(node.tagName) < 0){
-        ignored.tags.push(node.tagName);
+      if (state.ignoredTags.indexOf(node.tagName) < 0){
+        state.ignoredTags.push(node.tagName);
       }
     }
   }
@@ -91,15 +91,15 @@ function parseNode(node, ignored) {
  * Parse SVG document node list and return result path
  * 
  */
-function parseNodeList(nodeList, ignored) {
+function parseNodeList(nodeList, state) {
   var path = [];
   for (var i = 0; i < nodeList.length; i++) {
     if ( allowedTags[ nodeList[i].tagName ] === true){
       continue;
     }
-    path[i] = parseNode(nodeList[i], ignored);
+    path[i] = parseNode(nodeList[i], state);
   }
-  ignored.parsingStatus = path.length > 0 ?
+  state.ok = path.length > 0 ?
     path.length > 1 ? false : true
     : false;
   return path.join(' ');
@@ -118,17 +118,17 @@ function parseNodeList(nodeList, ignored) {
  *    width,
  *    height,
  *    ignoredTags[],
- *    ignoredAttrs[],
+ *    ignoredAttributes[],
  *    ok,
  * }
  * 
  */
 
 function parseSvg(svgData) {
-  var ignored = {
-    tags: [],
-    attrs:[],
-    parsingStatus: false,
+  var state = {
+    ignoredTags: [],
+    ignoredAttrs:[],
+    ok: false,
   };
 
   var path = null;
@@ -165,7 +165,7 @@ function parseSvg(svgData) {
     
     // TODO: Calculate the bounding box and set correct width and height
     if(width > 0 && height > 0){
-      path = parseNodeList(svgTag.childNodes, ignored);
+      path = parseNodeList(svgTag.childNodes, state);
     }
   }
 
@@ -175,9 +175,9 @@ function parseSvg(svgData) {
     y : y,
     width : width,
     height : height,
-    ignoredTags : ignored.tags.length > 0 ? ignored.tags : null,
-    ignoredAttributes : ignored.attrs.length > 0 ? ignored.attrs : null,
-    ok : ignored.parsingStatus,
+    ignoredTags : state.ignoredTags.length > 0 ? state.ignoredTags : null,
+    ignoredAttributes : state.ignoredAttrs.length > 0 ? state.ignoredAttrs : null,
+    ok : state.ok,
   };
 
 }
