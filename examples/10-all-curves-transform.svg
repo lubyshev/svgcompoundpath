@@ -1,0 +1,8 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="300px" height="1000px" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<g transform="translate(50,50) rotate(25,100,150) scale(1.2, 0.8) skewX(20) skewY(20) translate(-50)">
+  <path d="M10 80 Q 95 10 180 80" stroke="black" fill="transparent"/>
+  <path d="M10 180 C 40 110, 65 110, 95 180 S 150 250, 180 180" stroke="black" fill="transparent"/>
+  <path d="M10 280 Q 52.5 210, 95 280 T 180 280" stroke="black" fill="transparent"/>
+</g>  
+</svg>
