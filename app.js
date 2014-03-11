@@ -10,59 +10,51 @@ var fileDestination = process.argv[3] ? process.argv[3] : null;
 function import_svg_image(data, file) {
   var parsed = parseSvg(data);
   var errString;
-  if (parsed.ok) {
-    if (parsed.path) {
-      parsed.path = new SvgPath(parsed.path);
-      if (parsed.height !== '100%') {
-        var scale = 1000 / parsed.height;
-        parsed.path = parsed.path.translate(-parsed.x, -parsed.y).scale(scale)
-            .abs();
-        parsed.width = Math.round(parsed.width * scale); // new width
-        parsed.height = 1000;
-
-      }
-      parsed.path = parsed.path.round(1).toString();
-      var newDocument = [
-          '<?xml version="1.0" standalone="no"?>',
-          '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-          '<svg x="$x" y="$y" width="$width" height="$height" xmlns="http://www.w3.org/2000/svg">',
-          '<path d="$path" />', '</svg>'
-        ].join('\n');
-
-      [ 'x', 'y', 'width', 'height', 'path' ].forEach(function(val) {
-        var pat = new RegExp('\\$' + val, 'g');
-        newDocument = newDocument.replace(pat, parsed[val]);
-      });
-
-      if (file) {
-        fs.writeFileSync(file, newDocument, {
-          'encoding' : 'utf8'
-        });
-        console.log('Output: ' + file);
-      } else {
-        console.log(newDocument);
-      }
-    }
-  }
-  
-  
-  if( parsed.path === ''){
-    if( ! parsed.ok){
+  var hasOutput = false;
+  if (parsed.path === '') {
+    if (!parsed.ok) {
       errString = 'Invalid file';
     } else {
       errString = 'Image import failed';
     }
   } else {
-    if( ! parsed.ignoredTags && ! parsed.ignoredAttributes ){
-      if(parsed.ok){
+    hasOutput = true;
+    if (!parsed.ignoredTags && !parsed.ignoredAttributes) {
+      if (parsed.ok) {
         errString = 'That`s all right';
       } else {
         errString = 'If result is not the same as need try to convert with an editor.';
       }
     } else {
-      errString = 'If result is not the same as need try to convert with an editor.' +
-        (parsed.ignoredTags ? ' Ignored tag(s): ' + parsed.ignoredTags.join(', ') + '.' : '') +
-        (parsed.ignoredAttributes ? ' Ignored attribute(s): ' + parsed.ignoredAttributes.join(', ') + '.' : '');
+      errString = 'If result is not the same as need try to convert with an editor.' + (parsed.ignoredTags ? ' Ignored tag(s): ' + parsed.ignoredTags.join(', ') + '.' : '') + (parsed.ignoredAttributes ? ' Ignored attribute(s): ' + parsed.ignoredAttributes.join(', ') + '.' : '');
+    }
+  }
+  
+
+  if (hasOutput) {
+    parsed.path = new SvgPath(parsed.path);
+    if (parsed.height !== '100%') {
+      var scale = 1000 / parsed.height;
+      parsed.path = parsed.path.translate(-parsed.x, -parsed.y).scale(scale).abs();
+      parsed.width = Math.round(parsed.width * scale); // new width
+      parsed.height = 1000;
+
+    }
+    parsed.path = parsed.path.round(1).toString();
+    var newDocument = [ '<?xml version="1.0" standalone="no"?>', '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">', '<svg x="$x" y="$y" width="$width" height="$height" xmlns="http://www.w3.org/2000/svg">', '<path d="$path" />', '</svg>' ].join('\n');
+
+    [ 'x', 'y', 'width', 'height', 'path' ].forEach(function(val) {
+      var pat = new RegExp('\\$' + val, 'g');
+      newDocument = newDocument.replace(pat, parsed[val]);
+    });
+
+    if (file) {
+      fs.writeFileSync(file, newDocument, {
+        'encoding' : 'utf8'
+      });
+      console.log('Output: ' + file);
+    } else {
+      console.log(newDocument);
     }
   }
   
